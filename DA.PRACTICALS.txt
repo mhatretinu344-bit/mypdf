@@ -1,0 +1,514 @@
+Practical No - 2
+
+Aim :- Implement linear regression on the dataset to predict Salary based on Age using Google Colab.
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from sklearn import linear_model
+
+df = pd.read_csv('/content/TABLE.csv')
+df
+sns.lmplot(x='Age', y='Salary', data=df)
+
+model = linear_model.LinearRegression()
+
+model.fit(df[['Age']], df[['Salary']])
+
+model.score(df[['Age']], df[['Salary']])
+
+
+
+Practical No - 03
+
+Aim :- Implement logistic regression on the dataset to classify Purchased based on Age using google colab.
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+data = {'Age': [22, 25, 47, 52, 46, 56, 32, 29, 60, 46, 15, 28, 55, 62, 33, 40],
+        'Purchased': [0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1]}
+
+df = pd.DataFrame(data)
+x = df[['Age']]
+y = df['Purchased']  
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 42)
+
+
+model = LogisticRegression()
+model.fit(x_train, y_train)
+
+y_pred = model.predict(x_test)
+
+print("Accuracy Score : ", accuracy_score(y_test, y_pred) * 100, "%")
+print("Confusion Matrix : \n", confusion_matrix(y_test, y_pred))
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+
+x_curve = np.linspace(df['Age'].min(), df['Age'].max(), 100)
+
+y_prob = model.predict_proba(x_curve.reshape(-1, 1))[:, 1]
+
+plt.scatter(df['Age'], df['Purchased'], color='red', marker='x', label='Actual Data')
+plt.plot(x_curve, y_prob, color='blue', label='Logistic Regression Curve')
+plt.xlabel('Age')
+plt.ylabel('Probability of Purchase')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+Practical No: 04
+
+Aim :- Perform K-means clustering on customer segmentation dataset to group customers based on purchasing behaviour using google colab.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+
+df = pd.read_csv('/content/income.csv')
+print(df)
+
+plt.figure() 
+plt.scatter(df['age'], df['income'])
+plt.xlabel('age')
+plt.ylabel('income')
+plt.title('Original Data')
+plt.show()
+
+krange = range(1, 10)
+sse = []
+for k in krange:
+    m = KMeans(n_clusters=k, n_init=10)
+    m.fit(df[['age', 'income']])
+    sse.append(m.inertia_)
+
+print("SSE:", sse)
+plt.figure() 
+plt.plot(krange, sse, marker='o')
+plt.xlabel('K value')
+plt.ylabel('SSE')
+plt.title('Elbow Graph')
+plt.show()
+
+model = KMeans(n_clusters=3, n_init=10)
+df['Cluster'] = model.fit_predict(df[['age', 'income']])
+
+df1 = df[df['Cluster'] == 0]
+df2 = df[df['Cluster'] == 1]
+df3 = df[df['Cluster'] == 2]
+
+plt.figure() 
+plt.scatter(df1['age'], df1['income'], color='blue', label='cluster 0')
+plt.scatter(df2['age'], df2['income'], color='green', label='cluster 1')
+plt.scatter(df3['age'], df3['income'], color='red', label='cluster 2')
+plt.xlabel('age')
+plt.ylabel('income')
+plt.title('K-Means Clustering (K=3)')
+plt.legend()
+plt.show()
+
+
+Practical No: 05
+
+Aim :- Perform CRUD operations in MongoDB using MongoDB Atlas on employee records database.
+
+1. Create Database
+   Create table Emp / Employee
+   Command : use Employ
+
+2. Create table emp
+   Command : use emp
+   // Note: In MongoDB, collection is created automatically on first insert
+
+3. Display Database
+   Command : show dbs
+
+4. Inserting one record in a table emp   Command : db.emp.insertOne({empid: 1, name: "Rajesh", age: 23, email: "rajesh@gmail.com", sal: 15000})
+
+5. Display a Single record from the table emp
+   Command : db.emp.find({name: "Rajesh"})
+
+6. Inserting many records in the table emp
+   Command :
+   db.emp.insertMany([
+     {empid: 1, name: "Rohan", age: 25, email: "rohan@gmail.com", sal: 20000},
+     {empid: 2, name: "Priya", age: 21, email: "Priya@gmail.com", sal: 25000},
+     {empid: 3, name: "Sara", age: 30, email: "Sara@gmail.com", sal: 35000},
+     {empid: 4, name: "Divansh", age: 30, email: "Diva@gmail.com", sal: 20000},
+     {empid: 5, name: "Ritika", age: 25, email: "ritu@gmail.com", sal: 35000}
+   ])
+
+7. Display all records of the table emp
+   Command : db.emp.find()
+
+8. Find records using condition
+   Command : db.emp.find({age: {$gt: 25}})
+
+9. Using Greater than operator ($gt)
+   Command : db.emp.find({age: {$gt: 25}})
+
+10. Delete one record from the table emp
+    Command : db.emp.deleteOne({name: "Rohan"})
+
+11. Delete multiple records from the table emp
+    Command : db.emp.deleteMany({sal: 35000})
+
+12. Delete All records of the table
+    Command : db.emp.deleteMany({})
+
+
+Practical No: 06A
+
+Aim :- Use MongoDB aggregation pipeline to generate sales summaries from transaction data ($match & $group)
+
+1. Create database emp
+   Command : use emp
+
+2. Create Table emp1
+   Command : use emp1
+
+3. Display Database
+   Command : show dbs
+
+4. Inserting records in the table emp1
+   Command : 
+   db.emp1.insertMany([
+     {empid: 1, name: "Rohan", age: 25, sal: 20000, city: "Thane"},
+     {empid: 2, name: "Priya", age: 30, sal: 25500, city: "Mulund"},
+     {empid: 3, name: "Ishaan", age: 30, sal: 20000, city: "Kalyan"},
+     {empid: 4, name: "Rihana", age: 50, sal: 60000, city: "Thane"},
+     {empid: 5, name: "Gaurika", age: 35, sal: 30000, city: "Dombivali"},
+     {empid: 6, name: "Diya", age: 30, sal: 40000, city: "Byculla"},
+     {empid: 7, name: "Warisa", age: 45, sal: 50000, city: "Sion"},
+     {empid: 8, name: "I", age: 40, sal: 36000, city: "Goregaon"},
+     {empid: 9, name: "Yash", age: 30, sal: 30000, city: "Jogeshwari"},
+     {empid: 10, name: "Ath", age: 35, sal: 52000, city: "Chembur"}
+   ])
+
+5. Display all records of the table emp1
+   Command : db.emp1.find()
+
+6. Filter and Display all employee where the age is equal to 30
+   Command : db.emp1.aggregate([{$match: {age: 30}}])
+
+7. Calculate and Display the total salary for each employee ID
+   Command : db.emp1.aggregate([{$group: {_id: "$empid", total: {$sum: "$sal"}}}])
+
+8. Calculate the average age of employee grouped by there city
+   Command : db.emp1.aggregate([{$group: {_id: "$city", averageAge: {$avg: "$age"}}}])
+
+
+Practical No: 06 B
+
+Aim :- Use MongoDB Aggregation pipeline to generate sales summaries from transaction data.
+
+1. Display all records of the table emp1
+   Command : db.emp1.find()
+
+2. Display only the name and city for all employees while suppressing the id field
+   Command : db.emp1.aggregate([{$project: {name: 1, city: 1, _id: 0}}])
+
+3. Retrieve all employee records where the age is greater than 30
+   Command : db.emp1.aggregate([{$match: {age: {$gt: 30}}}])
+
+4. List all employee result sorted in ascending order of their age
+   Command : db.emp1.aggregate([{$sort: {age: 1}}])
+
+5. Retrieve only the first 2 employee records from collection
+   Command : db.emp1.aggregate([{$limit: 2}])
+
+6. Count the total number of employees in the collections
+   Command : db.emp1.countDocuments({})
+   // Old: db.emp1.count()
+
+7. Filter employees living in a Particular city & display them stored in ascending order of their age
+   Command : db.emp1.aggregate([{$match: {city: "Thane"}}, {$sort: {age: 1}}])
+
+8. Count the total number of employee residing in each city
+   Command : db.emp1.aggregate([{$group: {_id: "$city", total: {$sum: 1}}}])
+
+
+
+
+Practical No: 07
+
+Aim :- Create indexes in MongoDB and measure query performance improvement using explain()
+
+1. Create database employee
+   Command : use employee
+
+2. Display all records of the table emp
+   Command : db.emp1.find()
+   // use emp1
+
+3. Create index - to check data before index
+   Command : db.emp2.find()
+   // Actually showing data from emp2
+
+4. Create index on the field
+   Command : db.emp1.createIndex({sal: 1})
+
+5. Create a descending index on the field
+   Command : db.emp1.createIndex({sal: -1})
+
+6. Display all the indexes
+   Command : db.emp1.getIndexes()
+
+7. Drop a single index
+   Command : db.emp1.dropIndex({sal: 1})
+   // OR drop by name: db.emp1.dropIndex("sal_1")
+
+8. Drop multiple indexes
+   Command : db.emp1.dropIndexes()
+
+9. Measure Query Performance (Before Index)
+   Command : db.emp1.find({empid: 1}).explain("executionStats")
+
+10. Add an index
+    Command : db.emp1.createIndex({empid: 1});
+
+11. Measure Query Performance (After Index)
+    Command : db.emp1.find({empid: 1}).explain("executionStats")
+
+
+Practical No: 08
+
+Aim :- Use MongoDB $lookup to Join Customer and Order Collections for Combined reporting
+
+1. Create Table cust
+   Command : use shopDB
+   // db.createCollection("cust")
+
+2. Inserting record in the table
+   Command :
+   db.cust.insertMany([
+     {_id: 101, name: "John Doe", email: "John@gmail.com"},
+     {_id: 102, name: "Emily Smith", email: "Emily@gmail.com"},
+     {_id: 103, name: "Jane Anderson", email: "Jane@gmail.com"}
+   ])
+
+3. Display all records of the table cust
+   Command : db.cust.find()
+
+4. Create table order
+   Command : db.createCollection("order")
+
+5. Inserting record into table
+   Command :
+   db.order.insertMany([
+     {_id: 1, order_number: "ORD001", customer_id: 101},
+     {_id: 2, order_number: "ORD002", customer_id: 102},
+     {_id: 3, order_number: "ORD003", customer_id: 103}
+   ])
+
+6. Display all records of the table order
+   Command : db.order.find()
+
+7. Join the Cust and Order table using $lookup
+   Command :
+   db.cust.aggregate([
+     {
+       $lookup: {
+         from: "order",
+         localField: "_id",
+         foreignField: "customer_id",
+         as: "order_Detail"
+       }
+     }
+   ]);
+
+
+Practical No: 09
+
+Aim :- Use MongoDB $lookup to join Customer and Orders Collections for Combined reporting
+
+
+db.customer.insertMany([
+  {_id: 101, name: "Harshu", email: "harshu@example.com"},
+  {_id: 102, name: "Vrushali", email: "vrushali@example.com"},
+  {_id: 103, name: "Hitakshi", email: "hitakshi@example.com"},
+  {_id: 104, name: "Likhit", email: "likhit@example.com"}
+])
+db.order.insertMany([
+  {_id: 1, order_number: "ORD001", customer_id: 101},
+  {_id: 2, order_number: "ORD002", customer_id: 102},
+  {_id: 3, order_number: "ORD003", customer_id: 103},
+  {_id: 4, order_number: "ORD004", customer_id: 104}
+])
+db.customer.find()
+db.order.find()
+db.customer.aggregate([
+  {
+    $lookup: {
+      from: "order",
+      localField: "_id",
+      foreignField: "customer_id",
+      as: "orderDetails"
+    }
+  }
+])
+db.customer.aggregate([
+  {
+    $lookup: {
+      from: "order",
+      localField: "_id",
+      foreignField: "customer_id",
+      as: "orderDetails"
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      name: 1,
+      orderDetails: 1
+    }
+  }
+])
+
+
+Practical No: 10
+
+Aim :- Create and query tables in Cassandra for an e-commerce orders dataset
+
+Code :-
+
+a) -- Create a Keyspace
+CREATE KEYSPACE my_keyspace WITH replication = {
+  'class': 'SimpleStrategy',
+  'replication_factor': 1
+};
+
+-- Use keyspace
+USE my_keyspace;
+
+-- List all keyspaces
+DESCRIBE keyspaces;
+
+-- Drop a keyspace
+DROP KEYSPACE my_keyspace;
+
+b) Table Operations
+CREATE TABLE Users1 (
+  user_id INT PRIMARY KEY,
+  name TEXT,
+  email TEXT,
+  age INT
+);
+
+DESCRIBE TABLES;
+
+INSERT INTO Users1 (user_id, name, email, age)
+VALUES (101, 'Alice', 'alice@example.com', 30);
+
+INSERT INTO Users1 9:55 PM 10/27/2026(user_id, name, email, age)
+VALUES (102, 'Tom', 'tom@example.com', 35);
+
+INSERT INTO Users1 (user_id, name, email, age)
+VALUES (103, 'Jerry', 'Jerry@example.com', 40);
+
+SELECT * FROM Users1;
+
+SELECT name, email FROM Users1;
+
+UPDATE Users1
+SET age = 31
+WHERE user_id = 101;
+
+SELECT * FROM Users1;
+
+-- Limit results
+SELECT * FROM Users1 LIMIT 1;
+
+DELETE FROM Users1 WHERE user_id = 103;
+
+DELETE age FROM Users1 WHERE user_id = 101;
+
+
+
+Practical No: 11
+
+Aim :- Work with Cassandra (list) to Store & retrieve Product attributes
+
+Create table user_playlists (
+  user_id VARCHAR,
+  playlist_name TEXT,
+  Songs LIST<TEXT>,
+  PRIMARY KEY (user_id, playlist_name)
+);
+
+INSERT INTO user_playlists (user_id, playlist_name, Songs)
+VALUES ('U0123', 'Rock Classics', ['The Night We Met', 'I Wanna Be Yours']);
+
+SELECT * FROM user_playlists;
+
+UPDATE user_playlists
+SET Songs = Songs + ['Golden Brown']
+WHERE user_id = 'U0123' AND playlist_name = 'Rock Classics';
+
+SELECT * FROM user_playlists;
+
+UPDATE user_playlists
+SET Songs = ['Ye Fitoor'] + Songs
+WHERE user_id = 'U0123' AND playlist_name = 'Rock Classics';
+
+SELECT * FROM user_playlists;
+
+UPDATE user_playlists
+SET Songs[1] = 'Lover Song'
+WHERE user_id = 'U0123' AND playlist_name = 'Rock Classics';
+
+SELECT * FROM user_playlists;
+
+
+
+Practical No: 12
+
+Aim: Implement MapReduce in Python to count word frequency in a given text corpus
+
+Code:
+from collections import defaultdict
+
+# 1. Map function: splits text into words and assigns a value of 1
+def mapper(text):
+    for line in text.splitlines():
+        # clean and split words
+        words = line.strip().lower().split()
+        for word in words:
+            # Strip basic punctuation if needed
+            clean_word = word.strip().strip('.,!?";:()')
+            if clean_word:
+                yield (clean_word, 1)
+
+# 2. Shuffle / Group function: groups intermediate key-value of 1
+def shuffler(mapped_values):
+    grouped = defaultdict(list)
+    for key, value in mapped_values:
+        grouped[key].append(value)
+    return grouped.items()
+
+# 3. Reduce function: aggregates counts for each unique word
+def reducer(grouped_values):
+    reduced_results = {}
+    for key, values in grouped_values:
+        reduced_results[key] = sum(values)
+    return reduced_results
+
+# -- Example Usage --
+corpus = """MapReduce is a Programming model for
+processing big data
+Data Processing with MapReduce is fast and scalable"""
+
+# Step 1: Map
+mapped_data = list(mapper(corpus))
+
+# Step 2: Shuffle / Group
+grouped_data = shuffler(mapped_data)
+
+# Step 3: Reduce
+word_counts = reducer(grouped_data)
+
+print(word_counts)
